@@ -1,0 +1,18 @@
+<launch>
+    <!-- map -->
+    <!-- <arg name="map_file" default="$(find stage_simulation)/maps/eurobot_map/empty_map.yaml"/>
+    <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" /> -->
+
+    <include file="$(find fake_odom)/launch/fake_odom.launch"/>
+
+    <include file="$(find imu_filter_madgwick)/launch/imu_filter_madgwick.launch"/>
+    <!-- <node name="base_footprint_to_mpu6050" pkg="tf2_ros" type="static_transform_publisher" args="0 0 0 0 0 0 1 base_footprint mpu6050_frame" /> -->
+
+    <include file="$(find eurobot)/launch/localization/lidar_G6.launch"/>
+    <include file="$(find eurobot)/launch/localization/lidar_localization.launch"/>
+    
+    <node name="ekf" pkg="eurobot_localization" type="ekf" >
+        <rosparam file="$(find eurobot_localization)/config/ekf_dit.yaml"/>
+    </node>
+    
+</launch>

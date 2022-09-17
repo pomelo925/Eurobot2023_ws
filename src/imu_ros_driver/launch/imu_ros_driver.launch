@@ -1,0 +1,28 @@
+<launch>
+  <node name="mpu6050"  pkg="imu_ros_driver" type="imu_ros_driver_node" output="screen" >  
+    <param name="active" value="true"/>
+    <param name="publish_imu" value="true"/>
+
+    <param name="frequency" value="1000"/>
+    <param name="cov_ax" value="5"/>
+    <param name="cov_ay" value="5"/>
+    <param name="cov_Gz" value="0.01"/>
+
+<!-- for imu_calib, pub imu raw data -->
+    <param name="do_calib" value="true"/>
+    <param name="calibrate_mode" value="true"/>
+    <param name="sampling_time" value="10000"/>
+    <param name="offset_Gz" value="0"/>
+    <param name="offset_ax" value="0"/>
+    <param name="offset_ay" value="0"/>
+    <param name="imu_topic" value="raw"/>
+      <remap from="raw" to="mpu6050_imu_raw"/>
+    
+    <!-- <param name="calibrate_mode" value="false"/>
+    <param name="sampling_time" value="10000"/>
+    <param name="offset_Gz" value="0.004157"/>
+    <param name="offset_ax" value="0.290318"/>
+    <param name="offset_ay" value="-0.091091"/>
+    <param name="imu_topic" value="imu"/> -->
+  </node>
+</launch>

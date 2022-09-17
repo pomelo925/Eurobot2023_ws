@@ -1,0 +1,5 @@
+<launch>
+    <include file="$(find imu_ros_driver)/launch/imu_ros_driver.launch"/>
+    <include file="$(find imu_calib)/launch/apply_calib.launch"/>
+
+</launch>

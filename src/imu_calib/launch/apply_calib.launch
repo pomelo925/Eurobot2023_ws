@@ -1,0 +1,15 @@
+<launch>
+    <node name="apply_calib"  pkg="imu_calib" type="apply_calib" output="screen" >  
+      <param name="calibrate_gyros" type="bool"  value="true"/>
+      <param name="gyro_calib_samples" type="int" value="100"/>
+      <param name="calib_file" value="$(find eurobot)/params/imu_calib.yaml"/>
+      
+      <remap from="raw" to="mpu9250_imu_raw"/>
+      <remap from="corrected" to="mpu9250_imu_calibed"/>
+
+      <!-- <param name="cov_ax" value="5"/> -->
+      <!-- <param name="cov_ay" value="5"/> -->
+      <!-- <param name="cov_Gz" value="5"/> -->
+      
+    </node>
+  </launch>

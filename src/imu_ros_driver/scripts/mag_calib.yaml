@@ -1,0 +1,5 @@
+# Generated from /home/ubuntu/eueu_ws/rosbag/20220424_imurawdata.bag on 2022-04-23.
+use_mag: true
+mag_bias_x: -0.001984246
+mag_bias_y: -0.000483747
+mag_bias_z: -0.000236478

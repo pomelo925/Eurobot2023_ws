@@ -1,0 +1,22 @@
+<launch>
+    <param name="/use_sim_time" value="true"/>
+
+    <!-- map -->
+    <node name="map_to_beacon" pkg="tf2_ros" type="static_transform_publisher" args="0 0 0 0 0 0 1 map beacon_map"/>
+    <node name="beacon_server" pkg="map_server" type="map_server" args="$(find eurobot)/maps/beacon.yaml" output="screen">
+        <remap from="map" to="beacon_map"/>
+        <remap from="map_metadata" to="beacon_map_metadata"/>
+    </node>
+
+    <!-- stage -->
+    <node pkg="stage_ros" type="stageros" name="stageros" args="$(find eurobot)/stage/beacon.world" output="screen">
+        <remap from="base_scan" to="scan"/>
+    </node>
+
+    <!-- localization -->
+    <include file="$(find eurobot)/launch/localization/localization.launch"/>
+
+    <!-- rviz -->
+	<node name="rviz" pkg="rviz" type="rviz" args="-d /$(find eurobot)/../../rviz/lidar.rviz"/>
+    <node name="rqt_gui" pkg="rqt_gui" type="rqt_gui"/>
+</launch>

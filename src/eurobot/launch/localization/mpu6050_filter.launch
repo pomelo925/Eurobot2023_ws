@@ -1,0 +1,23 @@
+<launch>
+    <include file="$(find imu_ros_driver)/launch/imu_ros_driver.launch"/>
+
+    <node pkg="imu_calib" type="apply_calib" name="apply_calib" output="screen" clear_params="true">
+        <param name="calib_file" value="$(find eurobot)/params/imu_calib.yaml"/>
+        <param name="calibrate_gyros" value="true"/>
+        <param name="gyro_calib_samples" value="200"/>
+        <remap from="raw" to="mpu6050_imu_raw"/>
+        <remap from="corrected" to="mpu6050_imu_calibed"/>
+    </node>
+
+    <node pkg="imu_filter_madgwick" type="imu_filter_node" name="imu_filter_node" output="screen" clear_params="true">
+        <param name="publish_tf" value="false"/>
+        <param name="use_mag" value="false"/>
+        <param name="remove_gravity_vector" value="true"/>
+        <param name="publish_tf" value="false"/>
+    
+        <remap from="imu/data_raw" to="mpu6050_imu_calibed"/>
+        <remap from="imu/data" to="mpu6050_imu"/>
+    </node>
+
+    <node name="base_footprint_to_mpu6050" pkg="tf2_ros" type="static_transform_publisher" args="0 0 0 0 0 0 1 base_footprint mpu6050_frame" />
+</launch>

@@ -1,0 +1,80 @@
+<launch>
+    <node pkg="imu_ros_driver" name="mpu9250" type="mpu9250.py" output="screen" clear_params="true">
+        <remap from="imu_raw" to="mpu9250_imu_raw"/>
+        <remap from="mag_raw" to="mpu9250_mag_raw"/>
+    </node>
+
+    <!-- <node name="mpu9250"  pkg="imu_ros_driver" type="imu_ros_driver_node" output="screen" clear_params="true">  
+        <param name="active" value="true"/>
+        <param name="publish_imu" value="true"/>
+    
+        <param name="frequency" value="1000"/>
+        <param name="cov_ax" value="10"/>
+        <param name="cov_ay" value="10"/>
+        <param name="cov_Gz" value="0.01"/>
+    
+        <param name="do_calib" value="true"/>
+        <param name="calibrate_mode" value="true"/>
+        <param name="sampling_time" value="1000"/>
+
+        <param name="imu_topic" value="raw"/>
+        <param name="imu_frame" value="mpu9250_frame"/>
+
+        <remap from="raw" to="mpu9250_imu_raw"/>
+        
+    </node> -->
+
+    <!-- <node pkg="rtimulib_ros" type="rtimulib_ros" name="rtimulib_node" output="screen" clear_params="true">
+        <param name="calibration_file_path" value="$(find rtimulib_ros)/config"/>
+        <param name="calibration_file_name" value="RTIMULib" />
+        <param name="frame_id" value="mpu9250_frame"/>
+        <param name="cov_ax" value="10"/>
+        <param name="cov_ay" value="10"/>
+        <param name="cov_az" value="10"/>
+        <param name="cov_Gx" value="0.01"/>
+        <param name="cov_Gy" value="0.01"/>
+        <param name="cov_Gz" value="0.01"/>
+
+        <remap from="rtimulib_node/imu" to="mpu9250_imu_raw"/>
+    </node> -->
+
+    <node pkg="imu_calib" type="apply_calib" name="apply_calib_mpu9250" output="screen" clear_params="true">
+        <param name="calib_file" value="$(find eurobot)/params/imu_calib_big_ourtable.yaml"/>
+        <param name="calibrate_gyros" value="true"/>
+        <param name="calibrate_acc" value="true"/>
+        <param name="calibrate_mag" value="false"/>
+        <param name="gyro_calib_samples" value="200"/>
+        <param name="acc_calib_samples" value="200"/>
+        
+        <remap from="raw" to="mpu9250_imu_raw"/>
+        <remap from="corrected" to="mpu9250_imu_calibed"/>
+    </node>
+
+    <!-- <node pkg="imu_calib" type="mag_calib.py" name="mag_calib" output="screen" clear_params="true">
+        <remap from="mpu9250_mag" to="mpu9250_mag_calibed"/>
+    </node> -->
+
+    <node pkg="imu_filter_madgwick" type="imu_filter_node" name="imu_filter_node_mpu9250" output="screen" clear_params="true">
+        <param name="publish_tf" value="false"/>
+        <param name="use_mag" value="false"/>
+        <param name="remove_gravity_vector" value="true"/>
+        <param name="orientation_stddev" value="0.1"/>
+    
+        <remap from="imu/data_raw" to="mpu9250_imu_calibed"/>
+        <remap from="imu/mag" to="mpu9250_mag_raw"/>
+
+        <remap from="imu/data" to="mpu9250_imu"/>
+    </node>
+
+    <node name="base_footprint_to_mpu9250" pkg="tf2_ros" type="static_transform_publisher" args="0 0 0 0 0 0 1 base_footprint mpu9250_frame" />
+</launch>
+
+
+<!-- <launch>
+<arg name="robot_name" default="tera"/>
+    <group ns="$(arg robot_name)">
+        <param name="tf_prefix" value="$(arg robot_name)" />
+
+        <node pkg="tf" type="static_transform_publisher" name="camera_to_base" args="0 0 0.1 0 0.0 0 $(arg robot_name)/base_footprint $(arg robot_name)/camera_link 100"/>
+    </group>
+</launch> -->
