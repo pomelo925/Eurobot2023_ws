@@ -10,6 +10,10 @@ cmake ..
 make 
 sudo make install
 ```
+```
+# at the root of the workspace
+catkin_make
+```
 
 ### RUN
 ```
