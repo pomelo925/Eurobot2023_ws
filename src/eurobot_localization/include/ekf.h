@@ -88,7 +88,6 @@ class Ekf
     double dt_;
     double t_last;
     bool first_cb;
-    
 
     // ekf parameter
     // motion covariance

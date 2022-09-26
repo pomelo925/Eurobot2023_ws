@@ -15,11 +15,11 @@ beacon_3_y: 1.508
 
 theta: 0
 
-# 0 |----------|2
+#   |----------|2
 #   |          |
-# 1 |          |
+# 3 |          |
 #   |          |
-#   |----------|3
+#   |-----c----|1 (0)
 
 obstacle_topic: obstacles_to_base
 beacon_parent_frame_id: map

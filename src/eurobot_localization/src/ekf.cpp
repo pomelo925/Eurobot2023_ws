@@ -40,7 +40,7 @@ void Ekf::initialize()
     nh_.param<double>("/ekf/beacon_by", p_beacon_by_, -0.1);
     nh_.param<double>("/ekf/beacon_cx", p_beacon_cx_, 1.95);
     nh_.param<double>("/ekf/beacon_cy", p_beacon_cy_, 3.1);
-    
+
     // for beacon position in map list<double>{ax, ay, bx, by, cx, cy}
     Eigen::Vector2d beacon_a{ p_beacon_ax_, p_beacon_ay_ };
     Eigen::Vector2d beacon_b{ p_beacon_bx_, p_beacon_by_ };
@@ -475,12 +475,13 @@ void Ekf::setposeCallback(const geometry_msgs::PoseWithCovarianceStamped::ConstP
 void Ekf::odomCallback(const nav_msgs::Odometry::ConstPtr& odom_msg)
 {
     const ros::Time stamp = ros::Time::now() + ros::Duration(0.2);
-    if (first_cb){
+    if (first_cb)
+    {
         dt_ = odom_msg->header.stamp.toSec() - t_last;
-        p_odom_freq_ = 1/dt_;
-
+        p_odom_freq_ = 1 / dt_;
     }
-    else{
+    else
+    {
         first_cb = true;
         dt_ = 0.0;
     }
@@ -569,6 +570,7 @@ void Ekf::beaconCallback(const geometry_msgs::PoseWithCovarianceStamped::ConstPt
 
 void Ekf::imuCallback(const sensor_msgs::Imu::ConstPtr& imu_msg)
 {
+    // not use
     imu_w = imu_msg->angular_velocity.z;
 }
 
