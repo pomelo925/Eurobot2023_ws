@@ -1,17 +1,17 @@
-beacon_ax: -0.1182
-beacon_ay: 0.05885
+beacon_ax: 0.05885
+beacon_ay: -0.1182
 
-beacon_bx: -0.09771
-beacon_by: 2.935
+beacon_bx: 2.935
+beacon_by: -0.09771
 
-beacon_cx: 2.09646
-beacon_cy: 1.508
+beacon_cx: 1.508
+beacon_cy: 2.09646
 
 odom_freq: 100
 # initial pose
-initial_x: 1.0
-initial_y: 1.5
-initial_theta: 0
+initial_x: 1.5
+initial_y: 1.0
+initial_theta: 90
 
 # differential drive model const.
 predict_cov_a1: 1.5

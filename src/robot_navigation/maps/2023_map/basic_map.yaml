@@ -1,4 +1,4 @@
-image: basic_map.png
+image: basic_map_straight.png
 resolution: 0.01 # meters / pixel
 origin: [0.0, 0.0, 0.0]
 negate: 0
