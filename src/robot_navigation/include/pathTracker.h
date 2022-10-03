@@ -62,11 +62,9 @@ class pathTracker
     // subscriber
     ros::Subscriber poseSub_;
     ros::Subscriber goalSub_;
-    ros::Subscriber actionSub_;
-    // void poseCallback(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& pose_msg);
-    void poseCallback(const nav_msgs::Odometry::ConstPtr& pose_msg);
+    void poseCallback(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& pose_msg);
+    // void poseCallback(const nav_msgs::Odometry::ConstPtr& pose_msg);
     void goalCallback(const geometry_msgs::PoseStamped::ConstPtr& pose_msg);
-    // void actionCallback(const std_msgs::Bool::ConstPtr& action_msg);
 
     // Publisher
     ros::Publisher velPub_;

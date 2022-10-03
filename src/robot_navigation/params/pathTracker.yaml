@@ -1,0 +1,41 @@
+active: true
+robot_type: omni
+control_frequency: 50
+lookahead_distance: 0.3
+
+### linear parameter
+
+# acceleration
+linear_max_velocity: 0.6 #0.4
+linear_acceleration: 0.3 #0.2
+linear_acceleration_profile: linear
+
+# transition
+linear_transition_velocity: 0.15
+linear_transition_acceleration: 0.6
+
+# deceleration
+linear_kp: 0.75
+linear_brake_distance_ratio: 0.3
+linear_min_brake_distance: 0.33
+linear_deceleration_profile: linear # p_control
+
+
+### angular parameter 
+
+# acceleration 
+angular_max_velocity: 1.5 # 1.2
+angular_acceleration: 0.7 # 0.6
+# angular_acceleration_profile: linear
+
+# transition
+angular_transition_velocity: 0.15
+angular_transition_acceleration: 0.6
+
+# deceleration
+angular_kp: 0.85
+angular_brake_distance: 0.18
+# angular_deceleration_profile: linear
+
+xy_tolerance: 0.01
+theta_tolerance: 0.02

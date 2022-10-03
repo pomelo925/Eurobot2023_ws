@@ -117,8 +117,8 @@ bool pathTracker::initializeParams(std_srvs::Empty::Request& req, std_srvs::Empt
     {
         if (p_active_)
         {
-            // poseSub_ = nh_.subscribe("/ekf_pose", 50, &pathTracker::poseCallback, this);
-            poseSub_ = nh_.subscribe("/global_filter", 50, &pathTracker::poseCallback, this);
+            poseSub_ = nh_.subscribe("/ekf_pose", 50, &pathTracker::poseCallback, this);
+            // poseSub_ = nh_.subscribe("/global_filter", 50, &pathTracker::poseCallback, this);
             goalSub_ = nh_.subscribe("/nav_goal", 50, &pathTracker::goalCallback, this);
             velPub_ = nh_.advertise<geometry_msgs::Twist>("/cmd_vel", 10);
             localgoalPub_ = nh_.advertise<geometry_msgs::PoseStamped>("/local_goal", 10);
@@ -326,19 +326,7 @@ void pathTracker::plannerClient(RobotState cur_pos, RobotState goal_pos)
     }
 }
 
-// void pathTracker::poseCallback(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& pose_msg)
-// {
-//     cur_pose_.x_ = pose_msg->pose.pose.position.x;
-//     cur_pose_.y_ = pose_msg->pose.pose.position.y;
-//     tf2::Quaternion q;
-//     tf2::fromMsg(pose_msg->pose.pose.orientation, q);
-//     tf2::Matrix3x3 qt(q);
-//     double _, yaw;
-//     qt.getRPY(_, _, yaw);
-//     cur_pose_.theta_ = yaw;
-// }
-
-void pathTracker::poseCallback(const nav_msgs::Odometry::ConstPtr& pose_msg)
+void pathTracker::poseCallback(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& pose_msg)
 {
     cur_pose_.x_ = pose_msg->pose.pose.position.x;
     cur_pose_.y_ = pose_msg->pose.pose.position.y;
@@ -349,6 +337,18 @@ void pathTracker::poseCallback(const nav_msgs::Odometry::ConstPtr& pose_msg)
     qt.getRPY(_, _, yaw);
     cur_pose_.theta_ = yaw;
 }
+
+// void pathTracker::poseCallback(const nav_msgs::Odometry::ConstPtr& pose_msg)
+// {
+//     cur_pose_.x_ = pose_msg->pose.pose.position.x;
+//     cur_pose_.y_ = pose_msg->pose.pose.position.y;
+//     tf2::Quaternion q;
+//     tf2::fromMsg(pose_msg->pose.pose.orientation, q);
+//     tf2::Matrix3x3 qt(q);
+//     double _, yaw;
+//     qt.getRPY(_, _, yaw);
+//     cur_pose_.theta_ = yaw;
+// }
 
 void pathTracker::goalCallback(const geometry_msgs::PoseStamped::ConstPtr& pose_msg)
 {
