@@ -13,6 +13,7 @@
 #include <geometry_msgs/Quaternion.h>
 #include <std_msgs/String.h>
 // for cpp
+#include <iostream>
 #include <string>
 using namespace std;
 
