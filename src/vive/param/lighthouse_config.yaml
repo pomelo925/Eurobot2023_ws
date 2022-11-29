@@ -1,0 +1,28 @@
+active: true
+control_frequency: 100
+
+# survive tree frame
+survive_world_frame: "libsurvive_world"
+survive_tracker_frame: "LHR-94135635"
+survive_lh1_frame: "LHB-D4EEE18"
+survive_lh2_frame: "LHB-400B1A3E"
+
+# main tree frame
+robot_tracker_frame: "tracker_frame"
+robot_tracker_parent_frame: "lighthouse_frame"
+robot_tracker_root_frame: "map"
+lh_world_frame: "lighthouse_frame"
+lh_frame_prefix: "lh_frame_"
+lh_origin_frame_prefix: "lh_origin_frame_"
+lh_parent_frame: "map"
+
+lh1_x: 0.22
+lh1_y: 0.18
+lh1_z: 0.095
+lh1_theta: 45
+
+lh2_x: 2.78
+lh2_y: 0.18
+lh2_z: 0.095
+lh2_theta: 135
+
