@@ -1,7 +1,7 @@
 <launch>
 
     <node name="lighthouse_tf" pkg="vive" type="lighthouse_tf" output="screen">
-        <rosparam file="$(find vive)/param/lighthouse_config.yaml" command="load" /> 
+        <rosparam file="$(find vive)/param/lighthouse_config.yaml" command="load" />
     </node>
 
     <node name="ros_tools_maincc" pkg="vive" type="ros_tools_maincc" output="screen">
