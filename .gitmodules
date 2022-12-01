@@ -1,7 +1,0 @@
-[submodule "src/WiringPi"]
-	path = "src/WiringPi"
-	url = "https://github.com/WiringPi/WiringPi.git"
-
-[submodule "src/cnmatrix"]
-	path = "src/cnmatrix"
-	url = "https://github.com/cntools/cnmatrix.git" 
