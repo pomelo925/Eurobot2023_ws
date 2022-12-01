@@ -1,0 +1,11 @@
+[submodule "src/WiringPi"]
+	path = src/WiringPi
+	url = https://github.com/WiringPi/WiringPi.git
+
+[submodule "src/cnmatrix"]
+	path = src/cnmatrix
+	url = https://github.com/cntools/cnmatrix.git
+
+[submodule "src/libsurvive"]
+	path = "src/libsurvive"
+	url = "https://github.com/jingjingccc/libsurvive.git"
