@@ -12,7 +12,7 @@ sudo apt-get install build-essential zlib1g-dev libx11-dev libusb-1.0-0-dev free
 ### BUILD
 #### [YDLiDAR]
 ```
-git clone https://github.com/jingjingccc/Eurobot2023_ws.git
+git clone --recursive https://github.com/jingjingccc/Eurobot2023_ws.git 
 mkdir ~/Eurobot2023_ws/src/YDLidar-SDK/build
 cd ~/Eurobot2023_ws/src/YDLidar-SDK/build
 cmake ..
