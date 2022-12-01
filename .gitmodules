@@ -2,3 +2,9 @@
 	path = "src/libsurvive"
 	url = "https://github.com/jingjingccc/libsurvive.git"
 
+[submodule "src/cnmatix"]
+	path = src/cnmatix
+	url = https://github.com/cntools/cnmatrix.git
+[submodule "src/WiringPi"]
+	path = src/WiringPi
+	url = https://github.com/WiringPi/WiringPi.git
