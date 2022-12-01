@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(vive)
-
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
 
@@ -131,7 +130,8 @@ include_directories(
   ../libsurvive/include/libsurvive
   ../libsurvive/src
   ../libsurvive/redist
-  ../cnmatrix/include
+  ../cnmatix/include
+  ../cnmatix/include/cnmatrix
 )
 
 link_directories(../libsurvive/libs)
@@ -142,24 +142,6 @@ link_directories(../libsurvive/libs)
 #   src/${PROJECT_NAME}/vive.cpp
 # )
 
-# add_library(survive SHARED
-
-#   ../libsurvive/src/ootx_decoder.c
-#   ../libsurvive/src/poser_pollackpnp.c
-#   ../libsurvive/src/runposer.c
-#   ../libsurvive/src/survive.c
-#   ../libsurvive/src/survive_cal.c
-#   ../libsurvive/src/survive_config.c
-#   ../libsurvive/src/survive_data.c
-#   ../libsurvive/src/survive_driverman.c
-#   ../libsurvive/src/survive_process.c
-#   ../libsurvive/src/survive_vive.c
-#   ../libsurvive/src/redist/jsmn.c  
-#   ../libsurvive/src/redist/json_helpers.c  
-#   ../libsurvive/src/redist/linmath.c  
-#   ../libsurvive/src/redist/os_generic.c 
-
-# )
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -200,24 +182,24 @@ add_executable(lighthouse_tf src/lighthouse_tf.cpp)
 add_dependencies(lighthouse_tf ${catkin_EXPORTED_TARGETS})
 target_link_libraries(lighthouse_tf  ${catkin_LIBRARIES})
 
-add_executable(test_array src/test_array.cpp)
-target_link_libraries(test_array  ${catkin_LIBRARIES})
+# add_executable(test_array src/test_array.cpp)
+# target_link_libraries(test_array  ${catkin_LIBRARIES})
 
-add_executable(survivie-cli src/survivie-cli.cpp)
-target_link_libraries(survivie-cli ${LIBS} ${catkin_LIBRARIES})
+# add_executable(survivie-cli src/survivie-cli.cpp)
+# target_link_libraries(survivie-cli ${LIBS} ${catkin_LIBRARIES})
 
 add_executable(ros_tools_maincc src/ros_tools_maincc.cpp)
-target_link_libraries(ros_tools_maincc ${LIBS} ${catkin_LIBRARIES})
+target_link_libraries(ros_tools_maincc ${LIBS}  ${catkin_LIBRARIES} )
 
-add_executable(ros_tools_maincc_revise src/ros_tools_maincc_revise.cpp)
-target_link_libraries(ros_tools_maincc_revise ${LIBS} ${catkin_LIBRARIES})
+# add_executable(ros_tools_maincc_revise src/ros_tools_maincc_revise.cpp)
+# target_link_libraries(ros_tools_maincc_revise ${LIBS} ${catkin_LIBRARIES})
 
 
-add_executable(api_example src/api_example.cpp)
-target_link_libraries(api_example ${LIBS} ${catkin_LIBRARIES})
+# add_executable(api_example src/api_example.cpp)
+# target_link_libraries(api_example ${LIBS} ${catkin_LIBRARIES})
 
-add_executable(transfer_function src/transfer_function.cpp)
-target_link_libraries(transfer_function  ${catkin_LIBRARIES})
+# add_executable(transfer_function src/transfer_function.cpp)
+# target_link_libraries(transfer_function  ${catkin_LIBRARIES})
 # survive
 
 # add_executable(read_config src/read_config.cpp)
