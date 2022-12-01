@@ -1,0 +1,7 @@
+[submodule "src/libsurvive"]
+	path = "src/libsurvive"
+	url = "https://github.com/cntools/libsurvive.git"
+
+[submodule "src/cnmatrix"]
+	path = "src/cnmatrix"
+	url = "https://github.com/cntools/cnmatrix.git" 
