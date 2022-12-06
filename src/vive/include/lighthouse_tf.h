@@ -5,6 +5,7 @@
 #include <tf2_ros/transform_broadcaster.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 #include "tf/transform_datatypes.h"
+#include <tf2/LinearMath/Quaternion.h>
 // ros message
 #include <std_srvs/Empty.h>
 #include <geometry_msgs/TransformStamped.h>

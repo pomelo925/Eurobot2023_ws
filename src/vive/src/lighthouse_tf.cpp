@@ -139,14 +139,33 @@ EulerPose Vive::lookup_tf(std::string target, std::string source)
 
 EulerPose Vive::calculate_the_origin(EulerPose origin1, EulerPose origin2)
 {
-    // calculate the origin
+    // calculate the origin // take average
     EulerPose calculated_origin;
     calculated_origin.x = (origin1.x + origin2.x) / 2;
     calculated_origin.y = (origin1.y + origin2.y) / 2;
     calculated_origin.z = (origin1.z + origin2.z) / 2;
-    calculated_origin.roll = (origin1.roll + origin2.roll) / 2;
-    calculated_origin.pitch = (origin1.pitch + origin2.pitch) / 2;
-    calculated_origin.yaw = (origin1.yaw + origin2.yaw) / 2;
+
+    tf2::Quaternion origin1_, origin2_;
+    origin1_.setRPY(origin1.roll, origin1.pitch, origin1.yaw);
+    origin2_.setRPY(origin2.roll, origin2.pitch, origin2.yaw);
+    origin1_ = origin1_.normalize();
+    origin2_ = origin2_.normalize();
+    tf2::Quaternion origin_ = origin1_.slerp(origin2_, 0.5);
+
+    geometry_msgs::Quaternion qq;
+    qq.x = origin_.getX();
+    qq.y = origin_.getY();
+    qq.z = origin_.getZ();
+    qq.w = origin_.getW();
+
+    tf::Quaternion q;
+    tf::quaternionMsgToTF(qq, q);
+    double roll, pitch, yaw;
+    tf::Matrix3x3(q).getRPY(roll, pitch, yaw);
+
+    calculated_origin.roll = roll;
+    calculated_origin.pitch = pitch;
+    calculated_origin.yaw = yaw;
     // for showing in rviz
     publish_pose(calculated_origin, Survive::LH_origin);
     return calculated_origin;
