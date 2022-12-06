@@ -34,8 +34,14 @@ catkin_make
 ```
 
 ### SETTING
+#### [vive lighthouse / tracker permission]
 ```
 sudo cp -r 81-vive.rules /etv/udev/rules.d
+```
+#### [rename RPI USB ports]
+```
+chmod +x ./rename_RPI_USB_ports.sh
+sudo ./rename_RPI_USB_ports.sh
 ```
 
 ### RUN
