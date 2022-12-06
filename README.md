@@ -43,6 +43,11 @@ sudo cp -r 81-vive.rules /etv/udev/rules.d
 chmod +x ./rename_RPI_USB_ports.sh
 sudo ./rename_RPI_USB_ports.sh
 ```
+```
+# check USB port
+ls -l /dev | grep ttyUSB
+```
+<img src="img/RPI_USB.png" height="200">
 
 ### RUN
 ```
