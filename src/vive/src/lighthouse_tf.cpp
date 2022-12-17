@@ -232,7 +232,7 @@ void Vive::publish_initial_tf(std::string target_frame, std::string source_frame
             p_.x = lh1_x_;
             p_.y = lh1_y_;
             p_.z = lh1_z_;
-            p_.yaw = lh1_theta_;
+            p_.yaw = lh1_theta_ * M_PI / 180;
             p_.roll = 0.0;
             p_.pitch = 0.0;
             break;
@@ -240,7 +240,7 @@ void Vive::publish_initial_tf(std::string target_frame, std::string source_frame
             p_.x = lh2_x_;
             p_.y = lh2_y_;
             p_.z = lh2_z_;
-            p_.yaw = lh2_theta_;
+            p_.yaw = lh2_theta_ * M_PI / 180;
             p_.roll = 0.0;
             p_.pitch = 0.0;
             break;
@@ -251,8 +251,8 @@ void Vive::publish_initial_tf(std::string target_frame, std::string source_frame
 
 void Vive::timerCallback(const ros::TimerEvent &e)
 {
-    publish_initial_tf(lh_frame_prefix_ + std::to_string(1), lh_parent_frame_, Survive::LH1);
     publish_initial_tf(lh_frame_prefix_ + std::to_string(2), lh_parent_frame_, Survive::LH2);
+    publish_initial_tf(lh_frame_prefix_ + std::to_string(1), lh_parent_frame_, Survive::LH1);
     if (!check_survive_tf)
     {
         ROS_WARN_STREAM("[lighthouse_localization] : " << " wait for survive tf tree");    
@@ -274,6 +274,7 @@ void Vive::timerCallback(const ros::TimerEvent &e)
         // get transform from survivie tree : lh_world
         // and publish to main tf tree
         EulerPose survivie_tf;
+        // look up (target_frame , source_frame)
         survivie_tf = lookup_tf(survive_world_frame_, survive_lh1_frame_);
         publish_tf(lh_origin_frame_prefix_ + std::to_string(1), lh_frame_prefix_ + std::to_string(1), survivie_tf);
         survivie_tf = lookup_tf(survive_world_frame_, survive_lh2_frame_);

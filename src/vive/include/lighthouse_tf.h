@@ -15,6 +15,7 @@
 #include <std_msgs/String.h>
 // for cpp
 #include <iostream>
+#include <cmath>
 #include <string>
 using namespace std;
 

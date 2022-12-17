@@ -7,4 +7,5 @@
     <node name="ros_tools_maincc" pkg="vive" type="ros_tools_maincc" output="screen">
     </node>
 
+    <node type="rviz" name="jingrviz" pkg="rviz" args="-d $(find vive)/rviz/show_tf.rviz" />
 </launch>
