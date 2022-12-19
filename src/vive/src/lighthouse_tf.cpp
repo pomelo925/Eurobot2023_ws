@@ -116,23 +116,38 @@ EulerPose Vive::lookup_tf(std::string target, std::string source)
             ROS_WARN_STREAM(ex.what());
         }
     }
-
     EulerPose trans;
-    trans.x = transform.getOrigin().getX();
-    trans.y = transform.getOrigin().getY();
-    trans.z = transform.getOrigin().getZ();
-    double roll, pitch, yaw;
-    tf::Matrix3x3(transform.getRotation()).getRPY(roll, pitch, yaw);
+    if (target == survive_world_frame_)
+    {
+        tf::Transform t;
+        t = transform.inverse();
+        trans.x = t.getOrigin().getX();
+        trans.y = t.getOrigin().getY();
+        trans.z = t.getOrigin().getZ();
+        double roll, pitch, yaw;
+        tf::Matrix3x3(t.getRotation()).getRPY(roll, pitch, yaw);
 
-    std::cout << "lookup_TF => "
-              << "target : " << target << " | "
-              << "source : " << source << endl;
-    // ROS_INFO("%f %f %f %f   =>  %f %f %f\n", transform.getRotation().getX(), transform.getRotation().getY(),
-    //          transform.getRotation().getZ(), transform.getRotation().getW(), roll, pitch, yaw);
-    trans.roll = roll;
-    trans.pitch = pitch;
-    trans.yaw = yaw;
+        trans.roll = roll;
+        trans.pitch = pitch;
+        trans.yaw = yaw;
+    }
+    else
+    {
+        trans.x = transform.getOrigin().getX();
+        trans.y = transform.getOrigin().getY();
+        trans.z = transform.getOrigin().getZ();
+        double roll, pitch, yaw;
+        tf::Matrix3x3(transform.getRotation()).getRPY(roll, pitch, yaw);
 
+        // std::cout << "lookup_TF => "
+        //           << "target : " << target << " | "
+        //           << "source : " << source << endl;
+        // ROS_INFO("%f %f %f %f   =>  %f %f %f\n", transform.getRotation().getX(), transform.getRotation().getY(),
+        //          transform.getRotation().getZ(), transform.getRotation().getW(), roll, pitch, yaw);
+        trans.roll = roll;
+        trans.pitch = pitch;
+        trans.yaw = yaw;
+    }
     return trans;
 }
 
@@ -142,15 +157,19 @@ EulerPose Vive::calculate_the_origin()
     EulerPose calculate_origin;
     try
     {
-        listener.lookupTransform(lh_origin_frame_prefix_ + std::to_string(1), lh_parent_frame_, ros::Time(0), origin_1);
-        listener.lookupTransform(lh_origin_frame_prefix_ + std::to_string(2), lh_parent_frame_, ros::Time(0), origin_2);
+        // listener.lookupTransform(lh_origin_frame_prefix_ + std::to_string(1), lh_parent_frame_, ros::Time(0), origin_1);
+        // listener.lookupTransform(lh_origin_frame_prefix_ + std::to_string(2), lh_parent_frame_, ros::Time(0), origin_2);
+        listener.lookupTransform("lh_origin_frame_1", "map", ros::Time(0), origin_1);
+        listener.lookupTransform("lh_origin_frame_2", "map", ros::Time(0), origin_2);
     }
     catch (const tf::TransformException &ex)
     {
         try
         {
-            listener.lookupTransform(lh_origin_frame_prefix_ + std::to_string(1), lh_parent_frame_, ros::Time(0), origin_1);
-            listener.lookupTransform(lh_origin_frame_prefix_ + std::to_string(2), lh_parent_frame_, ros::Time(0), origin_2);
+            // listener.lookupTransform(lh_origin_frame_prefix_ + std::to_string(1), lh_parent_frame_, ros::Time(0), origin_1);
+            // listener.lookupTransform(lh_origin_frame_prefix_ + std::to_string(2), lh_parent_frame_, ros::Time(0), origin_2);
+            listener.lookupTransform("lh_origin_frame_1", "map", ros::Time(0), origin_1);
+            listener.lookupTransform("lh_origin_frame_2", "map", ros::Time(0), origin_2);
         }
         catch (const tf::TransformException &ex)
         {
@@ -161,6 +180,14 @@ EulerPose Vive::calculate_the_origin()
             ROS_WARN_STREAM(ex.what());
         }
     }
+    ROS_INFO("=======================================================================");
+    // print
+    double roll, pitch, yaw;
+    tf::Matrix3x3(origin_1.getRotation()).getRPY(roll, pitch, yaw);
+    ROS_INFO("origin1 => %f %f %f %f %f %f", origin_1.getOrigin().getX(), origin_1.getOrigin().getY(), origin_1.getOrigin().getZ(), roll, pitch, yaw);
+    tf::Matrix3x3(origin_1.getRotation()).getRPY(roll, pitch, yaw);
+    ROS_INFO("origin2 => %f %f %f %f %f %f", origin_2.getOrigin().getX(), origin_2.getOrigin().getY(), origin_2.getOrigin().getZ(), roll, pitch, yaw);
+
     calculate_origin.x = (origin_1.getOrigin().getX() + origin_2.getOrigin().getX()) / 2;
     calculate_origin.y = (origin_1.getOrigin().getY() + origin_2.getOrigin().getY()) / 2;
     calculate_origin.z = (origin_1.getOrigin().getZ() + origin_2.getOrigin().getZ()) / 2;
@@ -170,11 +197,13 @@ EulerPose Vive::calculate_the_origin()
     o_1 = origin_1.getRotation();
     o_2 = origin_2.getRotation();
     o_ = o_1.slerp(o_2, 0.5);
-    double roll, pitch, yaw;
     tf::Matrix3x3(o_).getRPY(roll, pitch, yaw);
     calculate_origin.roll = roll;
     calculate_origin.pitch = pitch;
     calculate_origin.yaw = yaw;
+
+    ROS_INFO("calculated origin %f %f %f %f %f %f", calculate_origin.x, calculate_origin.y, calculate_origin.z, roll, pitch, yaw);
+    ROS_INFO("=======================================================================");
 
     return calculate_origin;
 }
