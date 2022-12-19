@@ -29,7 +29,6 @@ Vive::~Vive()
 
 void Vive::initialize()
 {
-    tf::TransformListener listener;
     check_survive_tf = false;
     check_lighthouse_tf = false;
     timer_ = nh_.createTimer(ros::Duration(1.0 / control_frequency_), &Vive::timerCallback, this, false, false);
@@ -77,7 +76,7 @@ bool Vive::initializeParams(std_srvs::Empty::Request &req, std_srvs::Empty::Resp
             origin_pub_ = nh_.advertise<geometry_msgs::PoseStamped>("lighthouse_origin", 10);
             lh_1_pub_ = nh_.advertise<geometry_msgs::PoseStamped>("lh1_pose", 10);
             lh_2_pub_ = nh_.advertise<geometry_msgs::PoseStamped>("lh2_pose", 10);
-            tracker_pub_ = nh_.advertise<geometry_msgs::PoseStamped>("tracker_base", 10);
+            tracker_pub_ = nh_.advertise<geometry_msgs::PoseStamped>("tracker_pose", 10);
         }
         else
         {
@@ -90,46 +89,46 @@ bool Vive::initializeParams(std_srvs::Empty::Request &req, std_srvs::Empty::Resp
     }
     else
     {
-        ROS_WARN_STREAM("[lighthouse_localization] : " << "set param failed");
+        ROS_WARN_STREAM("[lighthouse_localization] : "
+                        << "set param failed");
     }
     return true;
 }
 
 EulerPose Vive::lookup_tf(std::string target, std::string source)
 {
-    // geometry_msgs::TransformStamped transform;
     tf::StampedTransform transform;
     try
     {
         listener.lookupTransform(target, source, ros::Time(0), transform);
     }
-    catch(const tf::TransformException& ex)
+    catch (const tf::TransformException &ex)
     {
         try
         {
             listener.lookupTransform(target, source, ros::Time(0), transform);
         }
-        catch(const tf::TransformException& ex)
+        catch (const tf::TransformException &ex)
         {
-            std::cout << "lookup_TF => " << "target : " << target << " | " << "source : " << source << endl;
+            std::cout << "lookup_TF => "
+                      << "target : " << target << " | "
+                      << "source : " << source << endl;
             ROS_WARN_STREAM(ex.what());
         }
     }
+
     EulerPose trans;
     trans.x = transform.getOrigin().getX();
     trans.y = transform.getOrigin().getY();
     trans.z = transform.getOrigin().getZ();
-
-    geometry_msgs::Quaternion qq;
-    qq.x = transform.getRotation().getX();
-    qq.y = transform.getRotation().getY();
-    qq.z = transform.getRotation().getZ();
-    qq.w = transform.getRotation().getW();
-    tf::Quaternion q;
-    tf::quaternionMsgToTF(qq, q);
     double roll, pitch, yaw;
-    tf::Matrix3x3(q).getRPY(roll, pitch, yaw);
+    tf::Matrix3x3(transform.getRotation()).getRPY(roll, pitch, yaw);
 
+    std::cout << "lookup_TF => "
+              << "target : " << target << " | "
+              << "source : " << source << endl;
+    // ROS_INFO("%f %f %f %f   =>  %f %f %f\n", transform.getRotation().getX(), transform.getRotation().getY(),
+    //          transform.getRotation().getZ(), transform.getRotation().getW(), roll, pitch, yaw);
     trans.roll = roll;
     trans.pitch = pitch;
     trans.yaw = yaw;
@@ -137,38 +136,47 @@ EulerPose Vive::lookup_tf(std::string target, std::string source)
     return trans;
 }
 
-EulerPose Vive::calculate_the_origin(EulerPose origin1, EulerPose origin2)
+EulerPose Vive::calculate_the_origin()
 {
-    // calculate the origin // take average
-    EulerPose calculated_origin;
-    calculated_origin.x = (origin1.x + origin2.x) / 2;
-    calculated_origin.y = (origin1.y + origin2.y) / 2;
-    calculated_origin.z = (origin1.z + origin2.z) / 2;
+    tf::StampedTransform origin_1, origin_2;
+    EulerPose calculate_origin;
+    try
+    {
+        listener.lookupTransform(lh_origin_frame_prefix_ + std::to_string(1), lh_parent_frame_, ros::Time(0), origin_1);
+        listener.lookupTransform(lh_origin_frame_prefix_ + std::to_string(2), lh_parent_frame_, ros::Time(0), origin_2);
+    }
+    catch (const tf::TransformException &ex)
+    {
+        try
+        {
+            listener.lookupTransform(lh_origin_frame_prefix_ + std::to_string(1), lh_parent_frame_, ros::Time(0), origin_1);
+            listener.lookupTransform(lh_origin_frame_prefix_ + std::to_string(2), lh_parent_frame_, ros::Time(0), origin_2);
+        }
+        catch (const tf::TransformException &ex)
+        {
+            std::cout << "calculated the origin => lookup tf " << endl;
+            // std::cout << "lookup_TF => "
+            //           << "target : " << target << " | "
+            //           << "source : " << source << endl;
+            ROS_WARN_STREAM(ex.what());
+        }
+    }
+    calculate_origin.x = (origin_1.getOrigin().getX() + origin_2.getOrigin().getX()) / 2;
+    calculate_origin.y = (origin_1.getOrigin().getY() + origin_2.getOrigin().getY()) / 2;
+    calculate_origin.z = (origin_1.getOrigin().getZ() + origin_2.getOrigin().getZ()) / 2;
 
-    tf2::Quaternion origin1_, origin2_;
-    origin1_.setRPY(origin1.roll, origin1.pitch, origin1.yaw);
-    origin2_.setRPY(origin2.roll, origin2.pitch, origin2.yaw);
-    origin1_ = origin1_.normalize();
-    origin2_ = origin2_.normalize();
-    tf2::Quaternion origin_ = origin1_.slerp(origin2_, 0.5);
-
-    geometry_msgs::Quaternion qq;
-    qq.x = origin_.getX();
-    qq.y = origin_.getY();
-    qq.z = origin_.getZ();
-    qq.w = origin_.getW();
-
-    tf::Quaternion q;
-    tf::quaternionMsgToTF(qq, q);
+    /* slerp */
+    tf::Quaternion o_1, o_2, o_;
+    o_1 = origin_1.getRotation();
+    o_2 = origin_2.getRotation();
+    o_ = o_1.slerp(o_2, 0.5);
     double roll, pitch, yaw;
-    tf::Matrix3x3(q).getRPY(roll, pitch, yaw);
+    tf::Matrix3x3(o_).getRPY(roll, pitch, yaw);
+    calculate_origin.roll = roll;
+    calculate_origin.pitch = pitch;
+    calculate_origin.yaw = yaw;
 
-    calculated_origin.roll = roll;
-    calculated_origin.pitch = pitch;
-    calculated_origin.yaw = yaw;
-    // for showing in rviz
-    publish_pose(calculated_origin, Survive::LH_origin);
-    return calculated_origin;
+    return calculate_origin;
 }
 
 void Vive::publish_pose(EulerPose pose_, Survive survive)
@@ -176,18 +184,18 @@ void Vive::publish_pose(EulerPose pose_, Survive survive)
     ros::Publisher puber;
     switch (survive)
     {
-        case Survive::LH1:
-            puber = lh_1_pub_;
-            break;
-        case Survive::LH2:
-            puber = lh_2_pub_;
-            break;
-        case Survive::LH_origin:
-            puber = origin_pub_;
-            break;
-        case Survive::Tracker:
-            puber = tracker_pub_;
-            break;
+    case Survive::LH1:
+        puber = lh_1_pub_;
+        break;
+    case Survive::LH2:
+        puber = lh_2_pub_;
+        break;
+    case Survive::LH_origin:
+        puber = origin_pub_;
+        break;
+    case Survive::Tracker:
+        puber = tracker_pub_;
+        break;
     }
 
     geometry_msgs::PoseStamped p_;
@@ -223,75 +231,44 @@ void Vive::publish_tf(std::string target_frame, std::string source_frame, EulerP
     lh_broadcaster.sendTransform(trans_);
 }
 
-void Vive::publish_initial_tf(std::string target_frame, std::string source_frame, Survive survive)
-{
-    EulerPose p_;
-    switch (survive)
-    {
-        case Survive::LH1:
-            p_.x = lh1_x_;
-            p_.y = lh1_y_;
-            p_.z = lh1_z_;
-            p_.yaw = lh1_theta_ * M_PI / 180;
-            p_.roll = 0.0;
-            p_.pitch = 0.0;
-            break;
-        case Survive::LH2:
-            p_.x = lh2_x_;
-            p_.y = lh2_y_;
-            p_.z = lh2_z_;
-            p_.yaw = lh2_theta_ * M_PI / 180;
-            p_.roll = 0.0;
-            p_.pitch = 0.0;
-            break;
-    }
-    // ROS_INFO("initial TF : pose[%f, %f, %f, %f, %f, %f]\n", p_.x, p_.y, p_.z, p_.roll, p_.pitch, p_.yaw);
-    publish_tf(target_frame, source_frame, p_);
-}
-
 void Vive::timerCallback(const ros::TimerEvent &e)
 {
-    publish_initial_tf(lh_frame_prefix_ + std::to_string(2), lh_parent_frame_, Survive::LH2);
-    publish_initial_tf(lh_frame_prefix_ + std::to_string(1), lh_parent_frame_, Survive::LH1);
     if (!check_survive_tf)
     {
-        ROS_WARN_STREAM("[lighthouse_localization] : " << " wait for survive tf tree");    
+        ROS_WARN_STREAM("[lighthouse_localization] : "
+                        << " wait for survive tf tree");
 
-        bool ok_1 = false, ok_2 = false, ok_3 = false, ok_4 = false;
-        std::string* error_msg1, *error_msg2, *error_msg3, *error_msg4;
+        bool ok_1 = false, ok_2 = false;
+        std::string *error_msg1, *error_msg2;
         ok_1 = listener.canTransform(survive_lh1_frame_, survive_world_frame_, ros::Time(0), error_msg1);
         ok_2 = listener.canTransform(survive_lh2_frame_, survive_world_frame_, ros::Time(0), error_msg2);
-        ok_3 = listener.canTransform(lh_frame_prefix_ + std::to_string(1), lh_parent_frame_, ros::Time(0), error_msg3);
-        ok_4 = listener.canTransform(lh_frame_prefix_ + std::to_string(2), lh_parent_frame_, ros::Time(0), error_msg4);
 
-        if (ok_1 && ok_2 && ok_3 && ok_4)
+        if (ok_1 && ok_2)
         {
             check_survive_tf = true;
         }
     }
     else
     {
-        // get transform from survivie tree : lh_world
-        // and publish to main tf tree
+        // get transform from survivie tree : lh_world and publish to main tf tree
         EulerPose survivie_tf;
-        // look up (target_frame , source_frame)
+        // look up (target_frame , source_frame)source->target // publish tf (target_frame , source_frame)source->target
         survivie_tf = lookup_tf(survive_world_frame_, survive_lh1_frame_);
         publish_tf(lh_origin_frame_prefix_ + std::to_string(1), lh_frame_prefix_ + std::to_string(1), survivie_tf);
         survivie_tf = lookup_tf(survive_world_frame_, survive_lh2_frame_);
         publish_tf(lh_origin_frame_prefix_ + std::to_string(2), lh_frame_prefix_ + std::to_string(2), survivie_tf);
 
-        // // publish tf : map->lightthouse
-        lh1_origin = lookup_tf(lh_origin_frame_prefix_ + std::to_string(1), lh_parent_frame_);
-        lh2_origin = lookup_tf(lh_origin_frame_prefix_ + std::to_string(2), lh_parent_frame_);
-        lh_world_origin = calculate_the_origin(lh1_origin, lh2_origin);
+        lh_world_origin = calculate_the_origin();
         publish_tf(lh_world_frame_, lh_parent_frame_, lh_world_origin);
 
-        // // publish tf : lighthouse->tracker
+        // publish tf : lighthouse->tracker
         if (!check_lighthouse_tf)
         {
-            ROS_WARN_STREAM("[lighthouse_localization] : " << "wait for tf from map to lighthouse");
+            ROS_WARN_STREAM("[lighthouse_localization] : "
+                            << "wait for tf from map to lighthouse");
             bool ok_ = false;
-            ok_ = listener.canTransform(lh_world_frame_, lh_parent_frame_, ros::Time(0));
+            std::string *error_msg;
+            ok_ = listener.canTransform(lh_world_frame_, lh_parent_frame_, ros::Time(0), error_msg);
             if (ok_)
             {
                 check_lighthouse_tf = true;

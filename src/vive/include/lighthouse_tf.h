@@ -6,6 +6,7 @@
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 #include "tf/transform_datatypes.h"
 #include <tf2/LinearMath/Quaternion.h>
+#include <tf/LinearMath/Matrix3x3.h>
 // ros message
 #include <std_srvs/Empty.h>
 #include <geometry_msgs/TransformStamped.h>
@@ -47,7 +48,6 @@ public:
     bool initializeParams(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
 
 private:
-    
     ros::NodeHandle nh_;
     ros::NodeHandle nh_local_;
     ros::ServiceServer params_srv_;
@@ -59,13 +59,11 @@ private:
     void timerCallback(const ros::TimerEvent &e);
 
     tf::TransformBroadcaster lh_broadcaster;
-    // tf2_ros::Buffer tf2_buffer_;
     tf::TransformListener listener;
 
     EulerPose lookup_tf(std::string target_frame, std::string source_frame);
-    EulerPose calculate_the_origin(EulerPose origin1, EulerPose origin2);
+    EulerPose calculate_the_origin();
     void publish_tf(std::string target_frame, std::string source_frame, EulerPose pose_);
-    void publish_initial_tf(std::string target_frame, std::string source_frame, Survive survive); 
     void publish_pose(EulerPose pose_, Survive survive);
 
     EulerPose lh1_origin;
