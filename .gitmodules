@@ -8,3 +8,7 @@
 [submodule "src/WiringPi"]
 	path = src/WiringPi
 	url = https://github.com/WiringPi/WiringPi.git
+
+[submodule "src/phidgets_drivers"]
+	path = src/phidgets_drivers
+	url = https://github.com/ros-drivers/phidgets_drivers.git
