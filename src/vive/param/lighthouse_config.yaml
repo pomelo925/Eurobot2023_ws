@@ -16,14 +16,14 @@ lh_frame_prefix: "lh_frame_"
 lh_origin_frame_prefix: "lh_origin_frame_"
 lh_parent_frame: "map"
 
-lh1_x: 0.22
-lh1_y: 0.18
-lh1_z: 0.095
+lh1_x: 0.075
+lh1_y: 0.075
+lh1_z: 0.15
 lh1_theta: 45
 
-lh2_x: 2.78
-lh2_y: 0.18
-lh2_z: 0.095
+lh2_x: 2.925
+lh2_y: 0.075
+lh2_z: 0.15
 lh2_theta: 135
 
 # theta unit in degree

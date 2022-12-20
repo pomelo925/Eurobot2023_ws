@@ -100,13 +100,13 @@ EulerPose Vive::lookup_tf(std::string target, std::string source)
     tf::StampedTransform transform;
     try
     {
-        listener.lookupTransform(target, source, ros::Time(0), transform);
+        listener.lookupTransform(source, target, ros::Time(0), transform);
     }
     catch (const tf::TransformException &ex)
     {
         try
         {
-            listener.lookupTransform(target, source, ros::Time(0), transform);
+            listener.lookupTransform(source, target, ros::Time(0), transform);
         }
         catch (const tf::TransformException &ex)
         {
@@ -117,37 +117,21 @@ EulerPose Vive::lookup_tf(std::string target, std::string source)
         }
     }
     EulerPose trans;
-    if (target == survive_world_frame_)
-    {
-        tf::Transform t;
-        t = transform.inverse();
-        trans.x = t.getOrigin().getX();
-        trans.y = t.getOrigin().getY();
-        trans.z = t.getOrigin().getZ();
-        double roll, pitch, yaw;
-        tf::Matrix3x3(t.getRotation()).getRPY(roll, pitch, yaw);
+    trans.x = transform.getOrigin().getX();
+    trans.y = transform.getOrigin().getY();
+    trans.z = transform.getOrigin().getZ();
+    double roll, pitch, yaw;
+    tf::Matrix3x3(transform.getRotation()).getRPY(roll, pitch, yaw);
 
-        trans.roll = roll;
-        trans.pitch = pitch;
-        trans.yaw = yaw;
-    }
-    else
-    {
-        trans.x = transform.getOrigin().getX();
-        trans.y = transform.getOrigin().getY();
-        trans.z = transform.getOrigin().getZ();
-        double roll, pitch, yaw;
-        tf::Matrix3x3(transform.getRotation()).getRPY(roll, pitch, yaw);
+    // std::cout << "lookup_TF => "
+    //           << "target : " << target << " | "
+    //           << "source : " << source << endl;
+    // ROS_INFO("%f %f %f %f   =>  %f %f %f\n", transform.getRotation().getX(), transform.getRotation().getY(),
+    //          transform.getRotation().getZ(), transform.getRotation().getW(), roll, pitch, yaw);
+    trans.roll = roll;
+    trans.pitch = pitch;
+    trans.yaw = yaw;
 
-        // std::cout << "lookup_TF => "
-        //           << "target : " << target << " | "
-        //           << "source : " << source << endl;
-        // ROS_INFO("%f %f %f %f   =>  %f %f %f\n", transform.getRotation().getX(), transform.getRotation().getY(),
-        //          transform.getRotation().getZ(), transform.getRotation().getW(), roll, pitch, yaw);
-        trans.roll = roll;
-        trans.pitch = pitch;
-        trans.yaw = yaw;
-    }
     return trans;
 }
 
@@ -157,19 +141,15 @@ EulerPose Vive::calculate_the_origin()
     EulerPose calculate_origin;
     try
     {
-        // listener.lookupTransform(lh_origin_frame_prefix_ + std::to_string(1), lh_parent_frame_, ros::Time(0), origin_1);
-        // listener.lookupTransform(lh_origin_frame_prefix_ + std::to_string(2), lh_parent_frame_, ros::Time(0), origin_2);
-        listener.lookupTransform("lh_origin_frame_1", "map", ros::Time(0), origin_1);
-        listener.lookupTransform("lh_origin_frame_2", "map", ros::Time(0), origin_2);
+        listener.lookupTransform(lh_parent_frame_, lh_origin_frame_prefix_ + std::to_string(1), ros::Time(0), origin_1);
+        listener.lookupTransform(lh_parent_frame_, lh_origin_frame_prefix_ + std::to_string(2), ros::Time(0), origin_2);
     }
     catch (const tf::TransformException &ex)
     {
         try
         {
-            // listener.lookupTransform(lh_origin_frame_prefix_ + std::to_string(1), lh_parent_frame_, ros::Time(0), origin_1);
-            // listener.lookupTransform(lh_origin_frame_prefix_ + std::to_string(2), lh_parent_frame_, ros::Time(0), origin_2);
-            listener.lookupTransform("lh_origin_frame_1", "map", ros::Time(0), origin_1);
-            listener.lookupTransform("lh_origin_frame_2", "map", ros::Time(0), origin_2);
+            listener.lookupTransform(lh_parent_frame_, lh_origin_frame_prefix_ + std::to_string(1), ros::Time(0), origin_1);
+            listener.lookupTransform(lh_parent_frame_, lh_origin_frame_prefix_ + std::to_string(2), ros::Time(0), origin_2);
         }
         catch (const tf::TransformException &ex)
         {
@@ -185,7 +165,7 @@ EulerPose Vive::calculate_the_origin()
     double roll, pitch, yaw;
     tf::Matrix3x3(origin_1.getRotation()).getRPY(roll, pitch, yaw);
     ROS_INFO("origin1 => %f %f %f %f %f %f", origin_1.getOrigin().getX(), origin_1.getOrigin().getY(), origin_1.getOrigin().getZ(), roll, pitch, yaw);
-    tf::Matrix3x3(origin_1.getRotation()).getRPY(roll, pitch, yaw);
+    tf::Matrix3x3(origin_2.getRotation()).getRPY(roll, pitch, yaw);
     ROS_INFO("origin2 => %f %f %f %f %f %f", origin_2.getOrigin().getX(), origin_2.getOrigin().getY(), origin_2.getOrigin().getZ(), roll, pitch, yaw);
 
     calculate_origin.x = (origin_1.getOrigin().getX() + origin_2.getOrigin().getX()) / 2;
@@ -198,6 +178,7 @@ EulerPose Vive::calculate_the_origin()
     o_2 = origin_2.getRotation();
     o_ = o_1.slerp(o_2, 0.5);
     tf::Matrix3x3(o_).getRPY(roll, pitch, yaw);
+
     calculate_origin.roll = roll;
     calculate_origin.pitch = pitch;
     calculate_origin.yaw = yaw;
@@ -281,7 +262,7 @@ void Vive::timerCallback(const ros::TimerEvent &e)
     {
         // get transform from survivie tree : lh_world and publish to main tf tree
         EulerPose survivie_tf;
-        // look up (target_frame , source_frame)source->target // publish tf (target_frame , source_frame)source->target
+        // look up (target_frame , source_frame) // publish tf (target_frame , source_frame)
         survivie_tf = lookup_tf(survive_world_frame_, survive_lh1_frame_);
         publish_tf(lh_origin_frame_prefix_ + std::to_string(1), lh_frame_prefix_ + std::to_string(1), survivie_tf);
         survivie_tf = lookup_tf(survive_world_frame_, survive_lh2_frame_);
@@ -295,10 +276,11 @@ void Vive::timerCallback(const ros::TimerEvent &e)
         {
             ROS_WARN_STREAM("[lighthouse_localization] : "
                             << "wait for tf from map to lighthouse");
-            bool ok_ = false;
-            std::string *error_msg;
-            ok_ = listener.canTransform(lh_world_frame_, lh_parent_frame_, ros::Time(0), error_msg);
-            if (ok_)
+            bool ok_1 = false, ok_2 = false;
+            std::string *error_msg1, *error_msg2;
+            ok_1 = listener.canTransform(lh_world_frame_, lh_parent_frame_, ros::Time(0), error_msg1);
+            ok_2 = listener.canTransform(survive_tracker_frame_, survive_world_frame_, ros::Time(0), error_msg2);
+            if (ok_1 && ok_2)
             {
                 check_lighthouse_tf = true;
             }
