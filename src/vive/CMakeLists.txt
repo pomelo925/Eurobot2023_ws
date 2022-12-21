@@ -183,6 +183,10 @@ add_executable(lighthouse_tf src/lighthouse_tf.cpp)
 add_dependencies(lighthouse_tf ${catkin_EXPORTED_TARGETS})
 target_link_libraries(lighthouse_tf  ${catkin_LIBRARIES})
 
+add_executable(lighthouse_tf_plus src/lighthouse_tf_plus.cpp)
+add_dependencies(lighthouse_tf_plus ${catkin_EXPORTED_TARGETS})
+target_link_libraries(lighthouse_tf_plus  ${catkin_LIBRARIES})
+
 # add_executable(test_array src/test_array.cpp)
 # target_link_libraries(test_array  ${catkin_LIBRARIES})
 

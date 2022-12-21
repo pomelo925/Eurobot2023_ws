@@ -1,0 +1,18 @@
+<launch>
+
+    <arg name="use_static_tf" default="true" />
+    
+    <node name="lighthouse_tf_plus" pkg="vive" type="lighthouse_tf_plus" output="screen">
+        <rosparam file="$(find vive)/param/lighthouse_config_plus.yaml" command="load" />
+    </node>
+
+    <node name="ros_tools_maincc" pkg="vive" type="ros_tools_maincc" output="screen">
+    </node>
+
+    <node type="rviz" name="jingrviz" pkg="rviz" args="-d $(find vive)/rviz/show_tf.rviz" />
+
+    <!-- static_transform_publisher x y z yaw pitch roll frame_id child_frame_id period_in_ms -->   <!-- yaw/pitch/roll in radians -->
+    <node pkg="tf" type="static_transform_publisher" name="lh1_broadcaster" args="0.22 0.18 0.095 0.785 0 0 map lh_frame_1 30" if="$(arg use_static_tf)" />
+    <node pkg="tf" type="static_transform_publisher" name="lh2_broadcaster" args="2.78 0.18 0.095 2.356 0 0 map lh_frame_2 30" if="$(arg use_static_tf)" />
+
+</launch>

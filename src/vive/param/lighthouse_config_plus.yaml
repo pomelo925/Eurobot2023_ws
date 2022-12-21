@@ -1,0 +1,27 @@
+active: true
+control_frequency: 100
+
+# survive tree frame
+survive_world_frame: "libsurvive_world"
+survive_tracker_frame: "LHR-94135635"
+survive_lh1_frame: "LHB-D4EEE18"
+survive_lh2_frame: "LHB-400B1A3E"
+
+# main tree frame
+lh_frame_prefix: "lh_frame_"
+lh_parent_frame: "map"
+lh_origin_frame_prefix: "lh_origin_frame_"
+survive_world_parent_frame: "map"
+
+
+lh1_x: 0.075
+lh1_y: 0.075
+lh1_z: 0.15
+lh1_theta: 45
+
+lh2_x: 2.925
+lh2_y: 0.075
+lh2_z: 0.15
+lh2_theta: 135
+
+# theta unit in degree
