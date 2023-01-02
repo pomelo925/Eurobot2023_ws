@@ -39,6 +39,7 @@ catkin_make
 sudo cp -r 81-vive.rules /etv/udev/rules.d
 ```
 #### [rename RPI USB ports]
+originated from : @sunfu-chou
 ```
 chmod +x ./rename_RPI_USB_ports.sh
 sudo ./rename_RPI_USB_ports.sh
