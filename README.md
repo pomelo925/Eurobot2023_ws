@@ -8,7 +8,7 @@ git clone --recursive https://github.com/jingjingccc/Eurobot2023_ws.git
 
 ### INSTALL
 ```
-sudo apt-get install ros-{distro}-rosserial ros-noetic-rosserial-arduino
+sudo apt-get install ros-{distro}-rosserial ros-{distro}-rosserial-arduino
 sudo apt-get install ros-{distro}-costmap-converter
 sudo apt-get install ros-{distro}-navigation
 sudo apt-get install build-essential zlib1g-dev libx11-dev libusb-1.0-0-dev freeglut3-dev liblapacke-dev libopenblas-dev libatlas-base-dev cmake
@@ -36,7 +36,7 @@ catkin_make
 ### SETTING
 #### [vive lighthouse / tracker permission]
 ```
-sudo cp -r 81-vive.rules /etv/udev/rules.d
+sudo cp -r 81-vive.rules /etc/udev/rules.d
 ```
 #### [rename RPI USB ports]
 originated from : @sunfu-chou
