@@ -50,6 +50,22 @@ ls -l /dev | grep ttyUSB
 ```
 <img src="img/RPI_USB.png" height="200">
 
+#### [Set up GPIOs on RPi for STM32 UARTs(for rosserial to work)]
+```
+cd ../../boot/firmware #some will in just boot/
+sudo nano config.txt
+```
+add the following on the bottom:
+```
+dtoverlay=uartx #for GPIO14, 15, x=0
+```
+after rebooted, test if the GPIOs are activated:
+```
+dmesg | grep tty
+```
+<img src="img/Setup_rosserial_RPi.png" height="200">
+
+if **ttyAMA0** is shown, then it worked
 ### RUN
 ```
 # at the root of the workspace
