@@ -28,6 +28,12 @@ sudo make install
 cd ~/Eurobot2023_ws/src/libsurvive
 make
 ```
+#### [WirinPi]
+```
+cd ~/Eurobot2023_ws/src/WirinPi
+./build
+```
+#### []
 ```
 # at the root of the workspace
 catkin_make
