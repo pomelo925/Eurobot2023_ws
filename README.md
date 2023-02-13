@@ -28,9 +28,9 @@ sudo make install
 cd ~/Eurobot2023_ws/src/libsurvive
 make
 ```
-#### [WirinPi]
+#### [WiringPi]
 ```
-cd ~/Eurobot2023_ws/src/WirinPi
+cd ~/Eurobot2023_ws/src/WiringPi
 ./build
 ```
 #### []
