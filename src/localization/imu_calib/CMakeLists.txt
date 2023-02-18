@@ -29,8 +29,8 @@ catkin_package(
 include_directories(include)
 include_directories(
   ${catkin_INCLUDE_DIRS}
-  ${Eigen_INCLUDE_DIRS}
-  ${YAML_INCLUDEDIR}
+  ${EIGEN3_INCLUDE_DIR}
+  ${YAML_INCLUDE_DIR}
 )
 
 # accel_calib library

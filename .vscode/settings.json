@@ -79,5 +79,12 @@
     "typeinfo": "cpp",
     "variant": "cpp",
     "bit": "cpp"
-  }
+  }, 
+  "configurations":[
+    {
+      "env":{
+        "DISPLAY":"localhost:10.0"
+    }
+    }
+  ]
 }
