@@ -78,7 +78,11 @@
     "typeindex": "cpp",
     "typeinfo": "cpp",
     "variant": "cpp",
-    "bit": "cpp"
+    "bit": "cpp",
+    "dense": "cpp",
+    "cn_matrix.hpp": "c",
+    "cn_matrix.h": "c",
+    "cn_flt.h": "c"
   }, 
   "configurations":[
     {
@@ -86,5 +90,15 @@
         "DISPLAY":"localhost:10.0"
     }
     }
+  ],
+  "workbench.colorCustomizations": {
+    "activityBar.background": "#0E3501",
+    "titleBar.activeBackground": "#144A01",
+    "titleBar.activeForeground": "#EEFFE8"
+  },
+  "python.autoComplete.extraPaths": [
+    "/home/pomelo925/POMELO/Eurobot2023_ws/devel/lib/python3/dist-packages",
+    "/home/pomelo925/POMELO/navigation_ws/devel/lib/python3/dist-packages",
+    "/opt/ros/noetic/lib/python3/dist-packages"
   ]
 }
